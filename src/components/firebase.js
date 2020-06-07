@@ -3,10 +3,11 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
 import 'firebase/storage';
+import { API_KEY } from '../../firebase_api'
 
 // Ok, to have this in the frontend (not a vulnerability)
 const firebaseConfig = {
-  apiKey: "AIzaSyARV8iKDqBSxTqnef2zqsNlGoUkSQ6tkr8",
+  apiKey: API_KEY,
   authDomain: "voxer-clone.firebaseapp.com",
   databaseURL: "https://voxer-clone.firebaseio.com",
   projectId: "voxer-clone",
