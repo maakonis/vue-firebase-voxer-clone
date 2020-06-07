@@ -4,6 +4,7 @@
     <User v-slot:user="{ user }">
       <div v-if="user">
         <UserProfile :user="user" />
+        <ChatList :uid="user.uid" />
       </div>
       <Login v-else />
     </User>
@@ -14,12 +15,14 @@
 import Login from './Login'
 import User from './User'
 import UserProfile from './UserProfile'
+import ChatList from './ChatList'
 
 export default {
   components: {
     Login,
     User,
-    UserProfile
+    UserProfile,
+    ChatList,
   }
 }
 </script>
