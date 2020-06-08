@@ -1,7 +1,6 @@
 <template>
   <main>
     <h3>Welcome to Chat Room {{ chatId }}</h3>
-
     <User #user="{ user }">
       <ul>
         <li v-for="message of messages" :key="message.id">
@@ -10,11 +9,17 @@
               :owner="user.uid === message.sender" />
         </li>
       </ul>
-
       <input v-model="newMessageText" class="input" />
+      <hr>
 
+      <h5>Record Audio</h5>
+      <button v-if="!recorder" @click="record()">Record</button>
+      <button v-else @click="stop()">Stop</button>
+      <audio v-if="newAudio" :src="newAudioURL" controls></audio>
+
+      <hr>
       <button
-        :disabled="!newMessageText || loading"
+        :disabled="(!newMessageText && !newAudio) || loading"
         class="button is-success"
         type="text"
         @click="addMessage(user.uid)">Send
@@ -24,17 +29,29 @@
 </template>
 
 <script>
-import { db } from './firebase'
+import { db, storage } from './firebase'
 import User from './User'
 import ChatMessage from './ChatMessage'
 
 export default {
+  data() {
+    return {
+      newMessageText: '',
+      loading: false,
+      messages: [],
+      newAudio: null,
+      recorder: null,
+    }
+  },
   computed: {
     chatId() {
       return this.$route.params.id
     },
     messagesCollection() {
       return db.doc(`chats/${this.chatId}`).collection('messages')
+    },
+    newAudioURL() {
+      return URL.createObjectURL(this.newAudio)
     }
   },
   firestore() {
@@ -45,24 +62,71 @@ export default {
   methods: {
     async addMessage(uid) {
       this.loading = true
+
+      let audioURL = null
       
       const { id: messageId } = this.messagesCollection.doc()
+
+      if (this.newAudio) {
+        const storageRef = storage
+          .ref('chats')
+          .child(this.chatId)
+          .child(`${messageId}.wav`)
+
+        console.log('storageRef', storageRef);
+        
+
+        await storageRef.put(this.newAudio)
+
+        audioURL = await storageRef.getDownloadURL()
+
+        console.log('audioURL', audioURL);
+        
+      }
 
       await this.messagesCollection.doc(messageId).set({
         text: this.newMessageText,
         sender: uid,
         createdAt: Date.now(),
+        audioURL,
       })
 
       this.loading = false
       this.newMessageText = ''
-    }
-  },
-  data() {
-    return {
-      newMessageText: '',
-      loading: false,
-      messages: [],
+      this.newAudio = null
+    },
+    async record() {
+      this.newAudio = null
+
+      // Source of the audio stream from the browser via microphone
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio:true,
+        video:false,
+      })
+
+      // Settings for the MediaRecorder object
+      const options = { mimeType: "audio/webm" }
+      const recordedChunks = []
+
+      // Create an object that interfaces audio recordings
+      this.recorder = new MediaRecorder(stream, options)
+
+      // Listens to audio data and pushes into an array
+      this.recorder.addEventListener("dataavailable", e => {
+        if (e.data.size > 0) {
+          recordedChunks.push(e.data)
+        }
+      })
+      // Listens for end of recording and stores the raw data into Blob
+      this.recorder.addEventListener("stop", () => {
+        this.newAudio = new Blob(recordedChunks)
+      })
+
+      this.recorder.start()
+    },
+    async stop() {
+      this.recorder.stop()
+      this.recorder = null
     }
   },
   components: {
