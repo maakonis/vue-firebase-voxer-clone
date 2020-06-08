@@ -1,9 +1,9 @@
-import firebase from 'firebase/app';
+import firebase from "firebase/app";
 // Import services that are actually required
-import 'firebase/firestore';
-import 'firebase/auth';
-import 'firebase/storage';
-import { API_KEY } from '../../firebase_api'
+import "firebase/firestore";
+import "firebase/auth";
+import "firebase/storage";
+import { API_KEY } from "../../firebase_api";
 
 // Ok, to have this in the frontend (not a vulnerability)
 const firebaseConfig = {

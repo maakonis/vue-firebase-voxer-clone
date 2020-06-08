@@ -12,17 +12,17 @@
 </template>
 
 <script>
-import Login from './Login'
-import User from './User'
-import UserProfile from './UserProfile'
-import ChatList from './ChatList'
+import Login from "./Login";
+import User from "./User";
+import UserProfile from "./UserProfile";
+import ChatList from "./ChatList";
 
 export default {
   components: {
     Login,
     User,
     UserProfile,
-    ChatList,
+    ChatList
   }
-}
+};
 </script>

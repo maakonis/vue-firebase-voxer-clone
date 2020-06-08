@@ -1,18 +1,18 @@
 <template>
   <div>
-    Logged in as {{ user.uid }} <br>
+    Logged in as {{ user.uid }} <br />
     <button @click="auth.signOut()" class="button">Sign Out</button>
   </div>
 </template>
 
 <script>
-import { auth } from './firebase'
+import { auth } from "./firebase";
 export default {
   data() {
     return {
-      auth,
-    }
+      auth
+    };
   },
-  props: ['user']
-}
+  props: ["user"]
+};
 </script>

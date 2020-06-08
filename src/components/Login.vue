@@ -14,51 +14,58 @@
     </div>
 
     <label for="email">Email</label>
-    <input v-model="email" placeholder="email" type="email" class="input">
+    <input v-model="email" placeholder="email" type="email" class="input" />
     <label for="password">Password</label>
-    <input v-model="password" placeholder="password" type="password" class="input">
+    <input
+      v-model="password"
+      placeholder="password"
+      type="password"
+      class="input"
+    />
 
-    <button 
-      @click="signInOrCreateUser()" 
-      class="button" 
+    <button
+      @click="signInOrCreateUser()"
+      class="button"
       :class="{ 'is-loading': loading }"
-      > {{ newUser ? 'Sign Up' : 'Login'}}</button>
+    >
+      {{ newUser ? "Sign Up" : "Login" }}
+    </button>
 
     <p class="has-text-danger" v-if="errorMessage">{{ errorMessage }}</p>
   </aside>
 </template>
 
 <script>
-import { auth } from './firebase'
+import { auth } from "./firebase";
 
 export default {
   data() {
     return {
       newUser: false,
-      email: '',
-      password: '',
+      email: "",
+      password: "",
       auth,
       loading: false,
-      errorMessage:'',
-    }
+      errorMessage: ""
+    };
   },
   methods: {
     async signInOrCreateUser() {
-      this.loading = true
-      this.errorMessage = ''
+      this.loading = true;
+      this.errorMessage = "";
 
       try {
         if (this.newUser) {
-          await auth.createUserWithEmailAndPassword(this.email, this.password)
+          await auth.createUserWithEmailAndPassword(this.email, this.password);
         } else {
-          await auth.signInWithEmailAndPassword(this.email, this.password)
+          await auth.signInWithEmailAndPassword(this.email, this.password);
         }
-        } catch(error) {
-        this.errorMessage = error.message
-        }
-   
-      this.loading = false
+      } catch (error) {
+        this.errorMessage = error.message;
+      }
+
+      this.loading = false;
     }
   }
-}
+};
 </script>
